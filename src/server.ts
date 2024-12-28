@@ -1,5 +1,5 @@
+import app from "./app";
 import { Config } from "./config";
-import app from "./config/app";
 import logger from "./config/logger";
 
 const startServer = () => {
