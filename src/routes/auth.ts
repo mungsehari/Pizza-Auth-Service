@@ -13,7 +13,7 @@ const userService = new UserService(userRepository);
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const tokenService = new TokenService(refreshTokenRepository);
 const authController = new AuthController(userService, logger, tokenService);
-authRouter.get("/register", (req, res, next) =>
+authRouter.post("/register", (req, res, next) =>
   authController.register(req, res, next),
 );
 

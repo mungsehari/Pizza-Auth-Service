@@ -6,13 +6,13 @@ import { RefreshToken } from "../entity/RefreshToken";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: Config.DB_HOST,
-  port: Number(Config.DB_PORT),
-  username: Config.DB_USERNAME,
-  password: Config.DB_PASSWORD,
-  database: Config.DB_NAME,
+  host: Config.DB_HOST || "localhost",
+  port: Number(Config.DB_PORT) || 5432,
+  username: Config.DB_USERNAME || "postgres",
+  password: Config.DB_PASSWORD || "hari0412",
+  database: Config.DB_NAME || "mernstck_auth_service",
   //Don't use this in production. Always  kep false
-  synchronize: false,
+  synchronize: true,
   logging: false,
   entities: [User, RefreshToken],
   migrations: [],
