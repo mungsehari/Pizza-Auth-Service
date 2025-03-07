@@ -34,4 +34,16 @@ export class UserService {
       throw error;
     }
   }
+
+  async findByEmail(email: string) {
+    try {
+      return await this.userRepository.findOne({ where: { email } });
+    } catch (err) {
+      const error = createHttpError(
+        500,
+        "Failed to find the user in the database",
+      );
+      throw error;
+    }
+  }
 }
