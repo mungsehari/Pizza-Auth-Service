@@ -3,7 +3,6 @@ import createHttpError from "http-errors";
 import { User } from "../entity/User";
 import bcrypt from "bcryptjs";
 import { UserData } from "../types";
-import { Roles } from "../constants";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
@@ -38,6 +37,17 @@ export class UserService {
   async findByEmail(email: string) {
     try {
       return await this.userRepository.findOne({ where: { email } });
+    } catch (err) {
+      const error = createHttpError(
+        500,
+        "Failed to find the user in the database",
+      );
+      throw error;
+    }
+  }
+  async findById(id: number) {
+    try {
+      return await this.userRepository.findOne({ where: { id } });
     } catch (err) {
       const error = createHttpError(
         500,
