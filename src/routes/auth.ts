@@ -16,6 +16,7 @@ import loginValidator from "../validators/login-validator";
 import { CredentialService } from "../services/CredentialService";
 import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
+import vaildateRefreshToken from "../middlewares/vaildateRefreshToken";
 
 const authRouter = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -49,5 +50,13 @@ authRouter.post("/login", loginValidator, (async (
 authRouter.get("/self", authenticate, (req: Request, res: Response) => {
   authController.self(req as AuthRequest, res);
 });
+
+authRouter.post(
+  "/refresh",
+  vaildateRefreshToken,
+  (req: Request, res: Response, next: NextFunction) => {
+    authController.refresh(req as AuthRequest, res, next);
+  },
+);
 
 export default authRouter;
