@@ -17,6 +17,7 @@ import { CredentialService } from "../services/CredentialService";
 import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
 import vaildateRefreshToken from "../middlewares/vaildateRefreshToken";
+import parseRefreshToken from "../middlewares/parseRefreshToken";
 
 const authRouter = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -56,6 +57,15 @@ authRouter.post(
   vaildateRefreshToken,
   (req: Request, res: Response, next: NextFunction) => {
     authController.refresh(req as AuthRequest, res, next);
+  },
+);
+
+authRouter.post(
+  "/logout",
+  authenticate,
+  parseRefreshToken,
+  (req: Request, res: Response, next: NextFunction) => {
+    authController.logout(req as AuthRequest, res, next);
   },
 );
 
