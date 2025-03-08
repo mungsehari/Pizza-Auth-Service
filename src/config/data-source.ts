@@ -12,9 +12,9 @@ export const AppDataSource = new DataSource({
   password: Config.DB_PASSWORD || "hari0412",
   database: Config.DB_NAME || "mernstck_auth_service",
   //Don't use this in production. Always  kep false
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: [User, RefreshToken],
-  migrations: [],
+  migrations: ["src/migration/*.ts"],
   subscribers: [],
 });

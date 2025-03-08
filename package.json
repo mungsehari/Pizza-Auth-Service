@@ -12,7 +12,11 @@
     "test": "jest --watch --runInBand",
     "prepare": "husky",
     "start": "ts-node src/index.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate",
+    "migration:run": "typeorm-ts-node-commonjs migration:run",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert",
+    "migration:cerate": "typeorm-ts-node-commonjs migration:cerate"
+  
   },
   "author": "Hari Mungse <mungse.hari@gmail.com>",
   "license": "ISC",
