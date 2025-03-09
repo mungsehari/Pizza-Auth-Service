@@ -4,6 +4,7 @@ import { HttpError } from "http-errors";
 import logger from "./config/logger";
 import authRouter from "./routes/auth";
 import cookieParser from "cookie-parser";
+import tenantRouter from "./routes/tenant";
 
 const app = express();
 app.use(express.static("public"));
@@ -14,7 +15,7 @@ app.get("/", (req, res, next) => {
   res.send("Welcome to the API");
 });
 app.use("/auth", authRouter);
-
+app.use("/tenants", tenantRouter);
 app.post("/auth/register", async (req, res) => {
   res.status(201).json();
 });
