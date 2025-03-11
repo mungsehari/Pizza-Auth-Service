@@ -18,7 +18,6 @@
     "migration:run": "typeorm-ts-node-commonjs migration:run",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert",
     "migration:cerate": "typeorm-ts-node-commonjs migration:cerate"
-  
   },
   "author": "Hari Mungse <mungse.hari@gmail.com>",
   "license": "ISC",
@@ -60,6 +59,7 @@
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
+    "mock-jwks": "^3.3.4",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
     "rsa-pem-to-jwk": "^1.1.3",
