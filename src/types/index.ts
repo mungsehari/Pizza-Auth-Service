@@ -19,7 +19,8 @@ export interface AuthRequest extends Request {
     id?: string;
   };
 }
-export type AuthCookies = {
+
+export type AuthCookie = {
   accessToken: string;
   refreshToken: string;
 };

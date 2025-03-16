@@ -12,7 +12,8 @@ import { Config } from "./config";
 const app = express();
 app.use(
   cors({
-    origin: Config.ORIGIN_URI,
+    // origin: Config.ORIGIN_URI,
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );

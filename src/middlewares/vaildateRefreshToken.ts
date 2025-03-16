@@ -1,7 +1,7 @@
 import { expressjwt } from "express-jwt";
 import { Request } from "express";
 import { Config } from "../config";
-import { AuthCookies, IRefreshTokenPayload } from "../types";
+import { AuthCookie, IRefreshTokenPayload } from "../types";
 import { AppDataSource } from "../config/data-source";
 import { RefreshToken } from "../entity/RefreshToken";
 import logger from "../config/logger";
@@ -10,7 +10,7 @@ export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,
   algorithms: ["HS256"],
   getToken(req: Request) {
-    const { refreshToken } = req.cookies as AuthCookies;
+    const { refreshToken } = req.cookies as AuthCookie;
     return refreshToken;
   },
   async isRevoked(request: Request, token) {
