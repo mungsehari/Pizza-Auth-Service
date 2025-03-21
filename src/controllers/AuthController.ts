@@ -8,6 +8,7 @@ import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/CredentialService";
 import { Roles } from "../constants";
+import { Config } from "../config";
 
 export class AuthController {
   constructor(
@@ -17,35 +18,43 @@ export class AuthController {
     private credentialService: CredentialService,
   ) {}
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
+    // Validation
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });
     }
     const { firstName, lastName, email, password } = req.body;
-    this.logger.info(`new  request to register user:`, {
+
+    this.logger.debug("New request to register a user", {
       firstName,
       lastName,
       email,
-      password: "*****",
+      password: "******",
     });
-
     try {
       const user = await this.userService.create({
         firstName,
         lastName,
         email,
         password,
-        role: Roles.CUSTOMER,
+        role: Roles.MANAGER,
       });
-      this.logger.info(`User created with id:`, { id: user.id });
+      this.logger.info("User has been registered", { id: user.id });
 
       const payload: JwtPayload = {
         sub: String(user.id),
         role: user.role,
+        // add tenant id to the payload
+        tenant: user.tenant ? String(user.tenant.id) : "",
+
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
       };
+
       const accessToken = this.tokenService.generateAccessToken(payload);
 
-      // Persist the refresh tokens
+      // Persist the refresh token
       const newRefreshToken = await this.tokenService.persistRefreshToken(user);
 
       const refreshToken = this.tokenService.generateRefreshToken({
@@ -54,22 +63,22 @@ export class AuthController {
       });
 
       res.cookie("accessToken", accessToken, {
-        domain: "localhost",
+        domain: Config.MAIN_DOMAIN,
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60,
-        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1d
+        httpOnly: true, // Very important
       });
 
       res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
+        domain: Config.MAIN_DOMAIN,
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60,
-        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1y
+        httpOnly: true, // Very important
       });
 
       res.status(201).json({ id: user.id });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
       return;
     }
   }
