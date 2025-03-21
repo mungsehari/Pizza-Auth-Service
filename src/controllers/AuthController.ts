@@ -84,21 +84,22 @@ export class AuthController {
   }
 
   async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
+    // Validation
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });
     }
     const { email, password } = req.body;
-    this.logger.info(`new  request to login user:`, {
+
+    this.logger.debug("New request to login a user", {
       email,
-      password: "*****",
+      password: "******",
     });
 
     try {
       const user = await this.userService.findByEmailWithPassword(email);
-
       if (!user) {
-        const error = createHttpError(400, "Email or password does not match");
+        const error = createHttpError(400, "Email or password does not match.");
         next(error);
         return;
       }
@@ -109,17 +110,23 @@ export class AuthController {
       );
 
       if (!passwordMatch) {
-        const error = createHttpError(400, "Email or password does not match");
+        const error = createHttpError(400, "Email or password does not match.");
         next(error);
         return;
       }
+
       const payload: JwtPayload = {
         sub: String(user.id),
         role: user.role,
+        tenant: user.tenant ? String(user.tenant.id) : "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
       };
+
       const accessToken = this.tokenService.generateAccessToken(payload);
 
-      // Persist the refresh tokens
+      // Persist the refresh token
       const newRefreshToken = await this.tokenService.persistRefreshToken(user);
 
       const refreshToken = this.tokenService.generateRefreshToken({
@@ -128,23 +135,23 @@ export class AuthController {
       });
 
       res.cookie("accessToken", accessToken, {
-        domain: "localhost",
+        domain: Config.MAIN_DOMAIN,
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60,
-        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1d
+        httpOnly: true, // Very important
       });
 
       res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
+        domain: Config.MAIN_DOMAIN,
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60,
-        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1y
+        httpOnly: true, // Very important
       });
 
-      this.logger.info(`User logged in with id:`, { id: user.id });
+      this.logger.info("User has been logged in", { id: user.id });
       res.json({ id: user.id });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
       return;
     }
   }
